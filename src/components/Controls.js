@@ -71,7 +71,6 @@ class Controls extends Component {
     );
   }
 
-
   render() {
 
     let children = [];
@@ -133,6 +132,38 @@ class Controls extends Component {
         }
 
       }
+
+      if (this.state.showHelp) {
+        switch (this.state.currentHelp) {
+          case "help1":
+          {
+            children.push(
+              <img
+              id="help"
+              key="help"
+              src={this.state.help1ImageSrc}
+              />
+            );
+            break;
+          }
+          case "help2":
+          {
+            children.push(
+              <img
+              id="help"
+              key="help"
+              src={this.state.help2ImageSrc}
+              />
+            );
+            break;
+          }
+          default:
+
+        }
+      }
+
+
+
     }
 
     return React.createElement(

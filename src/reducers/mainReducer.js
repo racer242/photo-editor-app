@@ -4,15 +4,35 @@ let mainReducerController = (state={}, action) => {
 
     switch (action.type) {
 
+      case 'CLEAR_HELP': {
+
+        let showHelp=state.showHelp;
+
+        if (state.currentHelp=="help2") {
+          showHelp=false;
+        }
+
+        return {
+          ...state,
+          currentHelp:"",
+          showHelp,
+        }
+      }
 
       case 'USE_IMAGE': {
 
         let addImagesSrc = state.addImagesSrc.concat();
         addImagesSrc[action.index]=action.src;
+
+        let imagesTransform=state.imagesTransform.concat();
+        imagesTransform[action.index].s=2;
+
         return {
           ...state,
           addImagesSrc,
+          imagesTransform,
           imageChanged:true,
+          currentHelp:"help2",
         }
       }
 

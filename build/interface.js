@@ -9,38 +9,42 @@ function onEditorAppReadyHandler(app) {
   app.setData(
     {
       editorBounds:{
-        width:1200,
-        height:1200,
+        width:1140,
+        height:700,
       },
 
       addImagesDefaultSize:{
-        width:500,
-        height:500,
+        width:450,
+        height:450,
       },
 
       addImagesDefaultScale:0.5,
 
-      minScale:1,
-      maxScale:20,
+      minScale:0.5,
+      maxScale:10,
 
       minRotation:0,
       maxRotation:360,
 
-      mainImageSrc:"holes.png",
+      mainImageSrc:"image.png",
+      backImageSrc:"back_image.jpg",
 
-      addImagesSrc:["","",""],
+      help1ImageSrc:"help1.svg",
+      help2ImageSrc:"help2.svg",
 
-      resultImagesSrc:["","",""],
+
+      addImagesSrc:[""],
+
+      resultImagesSrc:[""],
 
       addImagesTransform:[
-        ["0.5","0","0","0.5","118.25","71"],
-        ["0.5","0","0","0.5","276.5","461"],
-        ["0.5","0","0","0.5","643.25","202.25"],
+        ["1","0","0","1","340","169"],
+        // ["0.5","0","0","0.5","115","-55"],
       ],
 
       editable:true,
-      // mimeType:"image/png",
-      mimeType:"image/jpeg",
+      mimeType:"image/png",
+      // mimeType:"image/jpeg",
     }
   );
 
@@ -55,35 +59,43 @@ function onEditorAppImageHandler(app) {
     }
   }
   console.log("onEditorAppImageHandler Loaded:",loadedImageCount);
-
-  // (function (app) {
-  //   setTimeout(
-  //     function () {app.setData({editable:false})},
-  //     100
-  //   )
-  // })(app)
 }
 
 function onEditorAppImagesHandler(app,images) {
   console.log("onEditorAppImagesHandler");
-  console.log(images);
 
-  (function (app) {
-    setTimeout(
-      function () {app.setData({editable:true})},
-      5000
-    )
-  })(app)
+  var data=app.getData();
 
-}
+  console.log(images,data);
 
+  var xhr = new XMLHttpRequest();
 
-function onContinueButtonClick(event) {
-  console.log("onContinueButtonClick");
-  appInstance.saveImages();
-  var data=appInstance.getData();
-  console.log(data.resultImagesSrc);
+  var url = "save_image.php";
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          var json = JSON.parse(xhr.responseText);
+          console.log("Response:",json);
+          var publishUrl=escape(window.location.href+"/"+json.url);
+          window.open("https://www.facebook.com/sharer/sharer.php?u="+publishUrl,"_blank")
+      }
+  };
+  var data = JSON.stringify(
+    {
+      image:images[0],
+      x:340,
+      y:169,
+      width:450,
+      height:450,
+      scale:1,
+    }
+  );
+  xhr.send(data);
 
-  appInstance.setData({editable:false})
+  // const image = document.createElement('img')
+  // image.src=images[0];
+  // image.style.transform="scale(0.5)"
+  // document.querySelector('#editorWidget').appendChild(image)
 
 }

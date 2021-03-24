@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import Editor from './Editor.js'
 import Controls from './Controls.js'
 
-import { saveImages } from '../actions/appActions';
+import {
+  saveImages,
+  setStoreData,
+  clearHelp
+ } from '../actions/appActions';
 
 class EditorPlace extends Component {
 
@@ -21,6 +25,11 @@ class EditorPlace extends Component {
     }
 
     this.continueButton_clickHandler=this.continueButton_clickHandler.bind(this);
+    this.publishButton_clickHandler=this.publishButton_clickHandler.bind(this);
+    this.viewButton_clickHandler=this.viewButton_clickHandler.bind(this);
+
+    this.mouseDownHandler=this.mouseDownHandler.bind(this);
+
   }
 
   componentDidMount() {
@@ -74,6 +83,35 @@ class EditorPlace extends Component {
     );
   }
 
+  viewButton_clickHandler(event) {
+    this.store.dispatch(
+      setStoreData({editable:!this.state.editable})
+    );
+  }
+
+  publishButton_clickHandler(event) {
+    this.store.dispatch(
+      setStoreData({publishable:false})
+    );
+    setTimeout(()=>
+      {
+        this.store.dispatch(
+          setStoreData({publishable:true})
+        );
+      },
+      this.state.republishInterval
+    )
+    this.store.dispatch(
+      saveImages()
+    );
+  }
+
+  mouseDownHandler() {
+    this.store.dispatch(
+      clearHelp()
+    );
+  }
+
   render() {
 
     let children = [];
@@ -99,6 +137,11 @@ class EditorPlace extends Component {
           transform:`scale(${this.state.editorScale}) translateX(${this.state.editorX}px) translateY(${this.state.editorY}px)`
         }}
       >
+        <img
+          id="BackImage"
+          key="BackImage"
+          src={this.state.backImageSrc}
+        />
         <Editor
           id="Editor"
           key="Editor"
@@ -134,11 +177,50 @@ class EditorPlace extends Component {
       </div>
     );
 
+
+    let imageSrc = (this.state.addImagesSrc)?this.state.addImagesSrc[0]:null;
+    let addImageTransform = (this.state.addImagesTransform)?this.state.addImagesTransform[0]:null;
+    let imageTransform = (this.state.imagesTransform)?this.state.imagesTransform[0]:null;
+
+    if ((imageSrc)&&(imageSrc!=="")&&(addImageTransform)&&(imageTransform)) {
+
+      children.push(
+        <div
+          id="buttonContainer"
+          key="bditorContainer"
+          style={{
+            width:(this.state.editorBounds)?this.state.editorBounds.width:0,
+            height:(this.state.editorBounds)?this.state.editorBounds.height:0,
+            transform:`scale(${this.state.editorScale}) translateX(${this.state.editorX}px) translateY(${this.state.editorY}px)`
+          }}
+        >
+          <div
+            id="viewButton"
+            key="viewButton"
+            className="viewButton"
+            onClick={this.viewButton_clickHandler}
+            >{this.state.editable?"Посмотреть":"Изменить"}
+          </div>
+          <div
+            id="publishButton"
+            key="publishButton"
+            className="publishButton"
+            style={{
+              display:((!this.state.editable)&&(this.state.publishable))?"block":"none",
+            }}
+            onClick={this.publishButton_clickHandler}
+            >Поделиться
+          </div>
+        </div>
+      );
+    }
+
     return React.createElement(
       'div',
       { id:'EditorPlace',
         style:this.props.style,
         ref:this.ref,
+        onMouseDown:this.mouseDownHandler,
       },
       children
       );

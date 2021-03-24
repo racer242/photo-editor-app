@@ -17,7 +17,7 @@ class Editor extends Component {
 
     this.targetRefs=[];
     this.containerRefs=[];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 1; i++) {
       this.targetRefs.push(React.createRef());
       this.containerRefs.push(React.createRef());
     }
@@ -146,7 +146,7 @@ class Editor extends Component {
                 className="loadInput"
               />
             </div>
-          )
+          );
         }
       }
     }

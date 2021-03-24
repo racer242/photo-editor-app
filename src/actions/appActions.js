@@ -1,3 +1,9 @@
+export const clearHelp = () => {
+  return {
+    type: 'CLEAR_HELP',
+  }
+}
+
 export const useImage = (index,src) => {
   return {
     type: 'USE_IMAGE',

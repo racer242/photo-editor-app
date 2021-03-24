@@ -21,10 +21,19 @@ const settings = {
     addImagesDefaultScale:0.5,
 
     mainImageSrc:"",
-    addImagesSrc:["","",""],
-    addImagesTransform:[null,null,null],
+    addImagesSrc:[""],
+    addImagesTransform:[null],
 
-    resultImagesSrc:["","",""],
+    resultImagesSrc:[""],
+
+    mainImageSrc:"",
+    backImageSrc:"",
+
+    help1ImageSrc:"",
+    help2ImageSrc:"",
+
+    currentHelp:"help1",
+    showHelp:true,
 
     minScale:1,
     maxScale:20,
@@ -34,11 +43,12 @@ const settings = {
 
     imagesTransform:[
       {s:1,r:0},
-      {s:1,r:0},
-      {s:1,r:0},
     ],
 
     editable:true,
+    publishable:true,
+
+    republishInterval:5000,
 
 }
 

@@ -41,9 +41,10 @@ export const clearAction = () => {
   }
 }
 
-export const saveImages = () => {
+export const saveImages = (target) => {
   return {
     type: 'SAVE_IMAGES',
+    target:target,
   }
 }
 

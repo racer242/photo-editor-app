@@ -32,6 +32,9 @@ function onEditorAppReadyHandler(app) {
       help1ImageSrc:"help1.svg",
       help2ImageSrc:"help2.svg",
 
+      fbIconSrc:"fb.png",
+      vkIconSrc:"vk.png",
+      saveIconSrc:"save.png",
 
       addImagesSrc:[""],
 
@@ -61,12 +64,58 @@ function onEditorAppImageHandler(app) {
   console.log("onEditorAppImageHandler Loaded:",loadedImageCount);
 }
 
-function onEditorAppImagesHandler(app,images) {
+function getVkUrl(purl,ptitle,pimg) {
+  var url  = 'http://vk.com/share.php?';
+  if (purl) {
+      url += 'url=' + encodeURIComponent(purl);
+  }
+  if (ptitle) {
+      url += '&title=' + encodeURIComponent(ptitle);
+  }
+  if (pimg) {
+      url += '&image=' + encodeURIComponent(pimg);
+  }
+  url += '&noparse=true';
+
+  return url;
+};
+
+function addUniqueToUrl(url) {
+  if (url) {
+    var uStr=new Date().getTime();
+    if (url.indexOf("?")<0) {
+      url = url+"?u="+uStr;
+    } else {
+      url = url+"&u="+uStr;
+    }
+  }
+  return url;
+}
+
+function downloadLink(link) {
+  link=addUniqueToUrl(link);
+
+  let a = document.createElement('a');
+  a.href = link;
+
+  link = link.substr(link.lastIndexOf('/') + 1);
+  if (link.indexOf('?')>=0) {
+    link = link.substr(0,link.indexOf('?'));
+  }
+
+  a.download = link;
+  a.click();
+}
+
+
+function onEditorAppImagesHandler(app,images,target) {
   console.log("onEditorAppImagesHandler");
 
   var data=app.getData();
 
-  console.log(images,data);
+  if ((target=="fb")||(target=="vk")) {
+    var windowReference = window.open();
+  }
 
   var xhr = new XMLHttpRequest();
 
@@ -74,12 +123,25 @@ function onEditorAppImagesHandler(app,images) {
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-          var json = JSON.parse(xhr.responseText);
-          console.log("Response:",json);
-          var publishUrl=escape(window.location.href+"/"+json.url);
-          window.open("https://www.facebook.com/sharer/sharer.php?u="+publishUrl,"_blank")
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var json = JSON.parse(xhr.responseText);
+      var publishUrl=window.location.href;
+      if (publishUrl.slice(-1)!="/") publishUrl+="/";
+      publishUrl+=json.url;
+      var encodedUrl=escape(publishUrl);
+      if (target=="fb") {
+        windowReference.location = "https://www.facebook.com/sharer/sharer.php?u="+encodedUrl;
+      } else
+      if (target=="vk") {
+        windowReference.location = getVkUrl(publishUrl,"Галерея",publishUrl);
+      } else
+      if (target=="ready") {
+        readyHandler(publishUrl);
+      } else
+      if (target=="save") {
+        downloadLink(publishUrl);
       }
+    }
   };
   var data = JSON.stringify(
     {
@@ -92,10 +154,8 @@ function onEditorAppImagesHandler(app,images) {
     }
   );
   xhr.send(data);
+}
 
-  // const image = document.createElement('img')
-  // image.src=images[0];
-  // image.style.transform="scale(0.5)"
-  // document.querySelector('#editorWidget').appendChild(image)
-
+function readyHandler(url) {
+  console.log("СОБЫТИЕ ОТ КНОПКИ ГОТОВО. ССЫЛКА НА КАРТИНКУ:",url);
 }

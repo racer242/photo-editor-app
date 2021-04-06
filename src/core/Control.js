@@ -68,7 +68,7 @@ class Control extends Component {
       }
 
       if (state.imagesSaved) {
-          this.props.app.props.onImages(this.props.app,state.resultImagesSrc);
+          this.props.app.props.onImages(this.props.app,state.resultImagesSrc,state.target);
           this.store.dispatch(
             clearAction()
           );

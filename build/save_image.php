@@ -49,4 +49,8 @@
 
   echo json_encode($result);
 
+  if (file_exists($image_file_name)) {
+    unlink($image_file_name);
+  }
+
 ?>

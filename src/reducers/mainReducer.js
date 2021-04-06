@@ -68,6 +68,7 @@ let mainReducerController = (state={}, action) => {
         return {
           ...state,
           saveImages: true,
+          target:action.target,
         }
       }
 

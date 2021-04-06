@@ -25,7 +25,11 @@ class EditorPlace extends Component {
     }
 
     this.continueButton_clickHandler=this.continueButton_clickHandler.bind(this);
-    this.publishButton_clickHandler=this.publishButton_clickHandler.bind(this);
+    this.publishFbButton_clickHandler=this.publishFbButton_clickHandler.bind(this);
+    this.publishVkButton_clickHandler=this.publishVkButton_clickHandler.bind(this);
+    this.publishSaveButton_clickHandler=this.publishSaveButton_clickHandler.bind(this);
+
+    this.readyButton_clickHandler=this.readyButton_clickHandler.bind(this);
     this.viewButton_clickHandler=this.viewButton_clickHandler.bind(this);
 
     this.mouseDownHandler=this.mouseDownHandler.bind(this);
@@ -89,7 +93,11 @@ class EditorPlace extends Component {
     );
   }
 
-  publishButton_clickHandler(event) {
+  readyButton_clickHandler(event) {
+    this.publish("ready")
+  }
+
+  publish(target) {
     this.store.dispatch(
       setStoreData({publishable:false})
     );
@@ -102,8 +110,20 @@ class EditorPlace extends Component {
       this.state.republishInterval
     )
     this.store.dispatch(
-      saveImages()
+      saveImages(target)
     );
+  }
+
+  publishFbButton_clickHandler(event) {
+    this.publish("fb")
+  }
+
+  publishVkButton_clickHandler(event) {
+    this.publish("vk")
+  }
+
+  publishSaveButton_clickHandler(event) {
+    this.publish("save")
   }
 
   mouseDownHandler() {
@@ -202,14 +222,44 @@ class EditorPlace extends Component {
             >{this.state.editable?"Посмотреть":"Изменить"}
           </div>
           <div
-            id="publishButton"
-            key="publishButton"
-            className="publishButton"
+            id="readyButton"
+            key="readyButton"
+            className={(this.state.publishable)?"active":"inactive"}
             style={{
-              display:((!this.state.editable)&&(this.state.publishable))?"block":"none",
+              display:(!this.state.editable)?"block":"none",
             }}
-            onClick={this.publishButton_clickHandler}
-            >Поделиться
+            onClick={this.readyButton_clickHandler}
+            >ГОТОВО
+          </div>
+          <div
+            id="publishButtons"
+            key="publishButtons"
+            className="publishButtons"
+            style={{
+              display:(!this.state.editable)?"block":"none",
+            }}
+          >
+            <div
+              id="fbButton"
+              key="fbButton"
+              className={"publishButton"+((this.state.publishable)?" active":" inactive")}
+              onClick={this.publishFbButton_clickHandler}
+              ><img src={this.state.fbIconSrc} width="60" height="60"/>
+            </div>
+            <div
+              id="vkButton"
+              key="vkButton"
+              className={"publishButton"+((this.state.publishable)?" active":" inactive")}
+              onClick={this.publishVkButton_clickHandler}
+              ><img src={this.state.vkIconSrc} width="60" height="60"/>
+            </div>
+            <div
+              id="saveButton"
+              key="saveButton"
+              className={"publishButton"+((this.state.publishable)?" active":" inactive")}
+              onClick={this.publishSaveButton_clickHandler}
+              ><img src={this.state.saveIconSrc} width="60" height="60"/>
+            </div>
           </div>
         </div>
       );
